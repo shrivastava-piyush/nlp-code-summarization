@@ -12,7 +12,7 @@ class Seq2Seq:
 
         self.latent_dim = 256
         self.batch_size = 64
-        self.epochs = 100
+        self.epochs = 150
 
         self.input_data = input_data
         self.output_data = output_data
@@ -35,7 +35,6 @@ class Seq2Seq:
         encoder = LSTM(self.latent_dim, return_state=True)
         self.encoder_outputs, state_h, state_c = encoder(self.encoder_inputs)
         self.encoder_states = [state_h, state_c]
-        self.encoder_model = Model(self.encoder_inputs, self.encoder_states)
 
     def build_decoder(self):
         self.decoder_inputs = Input(shape=(None, self.num_decoder_tokens))
@@ -63,7 +62,7 @@ class Seq2Seq:
                        batch_size=self.batch_size,
                        epochs=self.epochs,
                        validation_split=0.2)
-        self.model.save('seq2seq.h5')
+        #self.model.save('seq2seq.h5')
 
     def apply_inference(self):
         self.encoder_model = Model(self.encoder_inputs, self.encoder_states)
@@ -93,7 +92,7 @@ class Seq2Seq:
         # Generate empty target sequence of length 1.
         target_seq = np.zeros((1, 1, self.num_decoder_tokens))
         # Populate the first character of target sequence with the start character.
-        #target_seq[0, 0, self.target_token_index['\t']] = 1.
+        target_seq[0, 0, self.target_token_index['\t']] = 1.
 
         # Sampling loop for a batch of sequences
         # (to simplify, here we assume a batch of size 1).
